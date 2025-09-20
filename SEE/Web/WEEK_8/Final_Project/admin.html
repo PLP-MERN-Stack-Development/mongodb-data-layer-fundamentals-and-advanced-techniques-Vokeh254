@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Anonymous Student Feedback System</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar div {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .navbar a.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Header */
+        .admin-header {
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-content p {
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .feedback-controls {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.5rem 1rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Feedback Items */
+        .feedback-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .feedback-item {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s ease;
+        }
+
+        .feedback-item:hover {
+            background: #f8f9ff;
+        }
+
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-reviewing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-resolved {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .feedback-content {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .feedback-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .quick-actions {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .quick-action {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quick-action:hover {
+            background: #f8f9ff;
+        }
+
+        .quick-action:last-child {
+            border-bottom: none;
+        }
+
+        .quick-action i {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-action-content h4 {
+            margin-bottom: 0.25rem;
+            color: #333;
+        }
+
+        .quick-action-content p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Analytics Chart Placeholder */
+        .analytics-chart {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+            color: #666;
+        }
+        .chart-icon {
+            font-size: 3rem;
+            color: #ccc;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1rem;
+            }
+            
+            .admin-header h1 {
+                font-size: 2rem;
+            }
+            
+            .feedback-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div>
+            <a href="Index.html">Home</a>
+            <a href="Index.html">About</a>
+            <a href="admin.html">Admin</a>
+        </div>
+    </nav>
+
+    <header class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <p>Manage anonymous student feedback efficiently and securely</p>
+    </header>
+
+    <div class="dashboard">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-message-dots'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>247</h3>
+                    <p>Total Feedback</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-time-five'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>23</h3>
+                    <p>Pending Review</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-check-circle'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>189</h3>
+                    <p>Resolved</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-trending-up'></i>
+                </div>
+                <div class="stat-content">
+                    <h3>35</h3>
+                    <p>This Week</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Feedback Management -->
+            <div class="feedback-section">
+                <div class="section-header">
+                    <i class='bx bx-message'></i>
+                    <h2>Recent Feedback</h2>
+                </div>
+                
+                <div class="feedback-controls">
+                    <button class="filter-btn active" data-status="all">All</button>
+                    <button class="filter-btn" data-status="new">New</button>
+                    <button class="filter-btn" data-status="reviewing">In Review</button>
+                    <button class="filter-btn" data-status="resolved">Resolved</button>
+                    <input type="text" class="search-box" placeholder="Search feedback...">
+                </div>
+
+                <div class="feedback-list">
+                    <div class="feedback-item" data-status="new">
+                        <div class="feedback-header">
+                            <div class="feedback-meta">
+                                <span><i class='bx bx-time'></i> 2 hours ago</span>
+                                <span class="status-badge status-new">New</span>
+                                <span><i class='bx bx-category'></i> Academic</span>
+                            </div>
+                        </div>
+                        <div class="feedback-content">
+                            The new online learning platform is difficult to navigate. Many students are struggling to find assignment submissions and course materials. Could there be a more intuitive design or better tutorials?
+                        </div>
+                        <div class="feedback-actions">
+                            <button class="action-btn btn-primary">Review</button>
+                            <button class="action-btn btn-secondary">Mark Important</button>
+                            <button class="action-btn btn-danger">Archive</button>
+                        </div>
+                    </div>
+
+                    <div class="feedback-item" data-status="reviewing">
+                        <div class="feedback-header">
+                            <div class="feedback-meta">
+                                <span><i class='bx bx-time'></i> 5 hours ago</span>
+                                <span class="status-badge status-reviewing">In Review</span>
+                                <span><i class='bx bx-category'></i> Campus Life</span>
+                            </div>
+                        </div>
+                        <div class="feedback-content">
+                            The library needs more study spaces during exam periods. Students often have to search for hours to find a quiet place to study. Additional study rooms would be greatly appreciated.
+                        </div>
+                        <div class="feedback-actions">
+                            <button class="action-btn btn-primary">Update Status</button>
+                            <button class="action-btn btn-secondary">Add Note</button>
+                            <button class="action-btn btn-danger">Archive</button>
+                        </div>
+                    </div>
+
+                    <div class="feedback-item" data-status="resolved">
+                        <div class="feedback-header">
+                            <div class="feedback-meta">
+                                <span><i class='bx bx-time'></i> 1 day ago</span>
+                                <span class="status-badge status-resolved">Resolved</span>
+                                <span><i class='bx bx-category'></i> Technology</span>
+                            </div>
+                        </div>
+                        <div class="feedback-content">
+                            The WiFi connection in the computer lab is very slow and unreliable. This makes it difficult to complete online assignments and research during lab sessions.
+                        </div>
+                        <div class="feedback-actions">
+                            <button class="action-btn btn-secondary">View Resolution</button>
+                            <button class="action-btn btn-secondary">Reopen</button>
+                            <button class="action-btn btn-danger">Archive</button>
+                        </div>
+                    </div>
+
+                    <div class="feedback-item" data-status="new">
+                        <div class="feedback-header">
+                            <div class="feedback-meta">
+                                <span><i class='bx bx-time'></i> 1 day ago</span>
+                                <span class="status-badge status-new">New</span>
+                                <span><i class='bx bx-category'></i> Facilities</span>
+                            </div>
+                        </div>
+                        <div class="feedback-content">
+                            The cafeteria food quality has declined recently. Many students are getting sick, and the vegetarian options are very limited. Please consider reviewing food safety protocols and expanding healthy meal options.
+                        </div>
+                        <div class="feedback-actions">
+                            <button class="action-btn btn-primary">Review</button>
+                            <button class="action-btn btn-secondary">Mark Urgent</button>
+                            <button class="action-btn btn-danger">Archive</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="quick-actions">
+                    <div class="section-header">
+                        <i class='bx bx-flash'></i>
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="quick-action">
+                        <i class='bx bx-download'></i>
+                        <div class="quick-action-content">
+                            <h4>Export Reports</h4>
+                            <p>Download feedback analytics</p>
+                        </div>
+                    </div>
+                    <div class="quick-action">
+                        <i class='bx bx-bell'></i>
+                        <div class="quick-action-content">
+                            <h4>Set Notifications</h4>
+                            <p>Configure alert preferences</p>
+                        </div>
+                    </div>
+                    <div class="quick-action">
+                        <i class='bx bx-cog'></i>
+                        <div class="quick-action-content">
+                            <h4>System Settings</h4>
+                            <p>Manage feedback categories</p>
+                        </div>
+                    </div>
+                    <div class="quick-action">
+                        <i class='bx bx-user-plus'></i>
+                        <div class="quick-action-content">
+                            <h4>Manage Admins</h4>
+                            <p>Add or remove admin access</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-chart">
+                    <div class="section-header">
+                        <i class='bx bx-bar-chart'></i>
+                            <i class='bx bx-line-chart chart-icon'></i>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div>
+                            <i class='bx bx-line-chart chart-icon'></i>
+                            <p>Feedback trends chart would appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample feedback data for demonstration
+        let feedbackData = [
+            {
+                id: 1,
+                content: "The new online learning platform is difficult to navigate...",
+                status: "new",
+                category: "Academic",
+                timestamp: "2 hours ago"
+            },
+            {
+                id: 2,
+                content: "The library needs more study spaces during exam periods...",
+                status: "reviewing",
+                category: "Campus Life",
+                timestamp: "5 hours ago"
+            },
+            {
+                id: 3,
+                content: "The WiFi connection in the computer lab is very slow...",
+                status: "resolved",
+                category: "Technology",
+                timestamp: "1 day ago"
+            },
+            {
+                id: 4,
+                content: "The cafeteria food quality has declined recently...",
+                status: "new",
+                category: "Facilities",
+                timestamp: "1 day ago"
+            }
+        ];
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const status = this.dataset.status;
+                const feedbackItems = document.querySelectorAll('.feedback-item');
+                
+                feedbackItems.forEach(item => {
+                    if (status === 'all' || item.dataset.status === status) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Update stats
+                updateStats();
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-box').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const feedbackItems = document.querySelectorAll('.feedback-item');
+            
+            feedbackItems.forEach(item => {
+                const content = item.querySelector('.feedback-content').textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Action button functionality
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const action = this.textContent.trim();
+                
+                // Add visual feedback
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+                
+                // Here you would implement the actual functionality
+                console.log(`Action: ${action}`);
+                
+                // For demonstration, show an alert
+                if (action === 'Review' || action === 'Update Status') {
+                    alert(`${action} functionality would be implemented here`);
+                }
+            });
+        });
+
+        // Quick actions functionality
+        document.querySelectorAll('.quick-action').forEach(action => {
+            action.addEventListener('click', function() {
+                const actionName = this.querySelector('h4').textContent;
+                console.log(`Quick action: ${actionName}`);
+                alert(`${actionName} functionality would be implemented here`);
+            });
+        });
+
+        // Update statistics
+        function updateStats() {
+            const visibleItems = document.querySelectorAll('.feedback-item[style="display: block"], .feedback-item:not([style])');
+            const total = document.querySelectorAll('.feedback-item').length;
+            const pending = document.querySelectorAll('.feedback-item[data-status="new"]').length;
+            const resolved = document.querySelectorAll('.feedback-item[data-status="resolved"]').length;
+            
+            // Update the stat cards (this would be connected to real data in production)
+            console.log(`Visible: ${visibleItems.length}, Total: ${total}, Pending: ${pending}, Resolved: ${resolved}`);
+        }
+
+        // Initialize
+        updateStats();
+        
+        // Auto-refresh simulation (in real app, this would fetch new data)
+        setInterval(() => {
+            // This would update the dashboard with new feedback
+            console.log('Checking for new feedback...');
+        }, 30000); // Check every 30 seconds
+    </script>
+</body>
+</html>

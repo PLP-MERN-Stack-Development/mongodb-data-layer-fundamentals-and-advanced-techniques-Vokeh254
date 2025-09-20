@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback - Anonymous Student Feedback System</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #EFF6FF;
+        }
+        h1, h2, h3 {
+            color: #1E3A8A;
+        }
+        p {
+            color: #374151;
+            line-height: 1.6;
+        }
+        .navbar{
+            display: flex;
+            background-color: #3B82F6;
+            margin: 0 auto;
+            padding: 30px ;
+            text-align: center;
+            justify-content: space-around;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            padding: 50px;
+            text-align: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover{
+            text-decoration: underline;
+            transform: scale(1.1);
+            color: #DBEAFE;
+        }
+
+        .hero{
+            margin: 0 auto;
+            padding: 50px;
+            text-align: center;
+            background-color: #DBEAFE;
+            background-size: cover; 
+            background-position: center;
+            color: #1E3A8A;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #E5E7EB;
+            min-height: 200px;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .up{
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3B82F6;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .up:hover {
+            transform: scale(1.1);
+            background-color: #2563EB;
+        }
+
+        .feedback-form-container {
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            padding: 40px;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #E5E7EB;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #DBEAFE;
+        }
+
+        .form-header h2 {
+            color: #1E3A8A;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .form-header p {
+            color: #6B7280;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1E3A8A;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .form-group select,
+        .form-group textarea,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: Arial, sans-serif;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group select:focus,
+        .form-group textarea:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group .textarea-large {
+            min-height: 180px;
+        }
+
+        .form-help {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-top: 5px;
+        }
+
+        .privacy-notice {
+            background-color: #F0FDF4;
+            border: 2px solid #10B981;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .privacy-icon {
+            color: #10B981;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .privacy-content h4 {
+            color: #065F46;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .privacy-content p {
+            color: #047857;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .category-option {
+            position: relative;
+        }
+
+        .category-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .category-option label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background-color: #F8FAFC;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .category-option input[type="radio"]:checked + label {
+            background-color: #DBEAFE;
+            border-color: #3B82F6;
+            color: #1E3A8A;
+        }
+
+        .category-option label:hover {
+            background-color: #F1F5F9;
+            border-color: #CBD5E1;
+        }
+
+        .category-icon {
+            font-size: 1.3rem;
+            color: #3B82F6;
+        }
+
+        .urgency-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .urgency-option {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .urgency-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .urgency-option label {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background-color: #F8FAFC;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .urgency-option input[type="radio"]:checked + label {
+            border-color: #3B82F6;
+            color: #1E3A8A;
+        }
+
+        .urgency-low input[type="radio"]:checked + label {
+            background-color: #F0FDF4;
+            border-color: #10B981;
+            color: #065F46;
+        }
+
+        .urgency-medium input[type="radio"]:checked + label {
+            background-color: #FFFBEB;
+            border-color: #F59E0B;
+            color: #92400E;
+        }
+
+        .urgency-high input[type="radio"]:checked + label {
+            background-color: #FEF2F2;
+            border-color: #EF4444;
+            color: #991B1B;
+        }
+
+        .character-counter {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #6B7280;
+            margin-top: 5px;
+        }
+
+        .character-counter.warning {
+            color: #F59E0B;
+        }
+
+        .character-counter.danger {
+            color: #EF4444;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 40px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: #2563EB;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #1D4ED8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #6B7280;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4B5563;
+        }
+
+        .success-message {
+            display: none;
+            background-color: #F0FDF4;
+            border: 2px solid #10B981;
+            color: #065F46;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-tips {
+            background-color: #FEF3C7;
+            border: 2px solid #F59E0B;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-tips h4 {
+            color: #92400E;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-tips ul {
+            color: #78350F;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .form-tips li {
+            margin-bottom: 5px;
+        }
+
+        .divide{
+            border: none;
+            border-top: 1px solid #E5E7EB;
+            margin: 40px 0;
+        }
+
+        footer{
+            text-align: center;
+            padding: 20px;
+            background-color: #3B82F6;
+            color: white;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .feedback-form-container {
+                margin: 0 15px 30px 15px;
+                padding: 25px;
+            }
+            
+            .form-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .urgency-options {
+                flex-direction: column;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div>                              
+            <a href="index.html">Home</a>                                           
+            <a href="index.html#About">About</a>                                           
+            <a href="admin.html">Admin</a>                      
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Share Your Voice Anonymously</h1>
+        <p>Your feedback helps create a better learning environment for everyone</p>
+        <p><strong>100% Anonymous • Completely Secure • Always Confidential</strong></p>
+    </section>
+
+    <div class="up" onclick="scrollToTop()">
+        <i class='bx bx-arrow-up'></i>
+    </div>
+
+    <div class="feedback-form-container">
+        <div class="form-header">
+            <h2><i class='bx bx-message-dots'></i> Submit Your Feedback</h2>
+            <p>Help us improve by sharing your thoughts, concerns, or suggestions</p>
+        </div>
+
+        <div class="privacy-notice">
+            <div class="privacy-icon">
+                <i class='bx bx-shield-check'></i>
+            </div>
+            <div class="privacy-content">
+                <h4>Your Privacy is Protected</h4>
+                <p>This form collects no personal information. Your submission is completely anonymous and cannot be traced back to you. We only store your feedback content and the selected category.</p>
+            </div>
+        </div>
+
+        <form id="feedbackForm">
+            <div class="form-group">
+                <label for="category">What area does your feedback relate to? *</label>
+                <div class="category-grid">
+                    <div class="category-option">
+                        <input type="radio" id="academic" name="category" value="academic" required>
+                        <label for="academic">
+                            <i class='bx bx-book category-icon'></i>
+                            Academic Programs
+                        </label>
+                    </div>
+                    <div class="category-option">
+                        <input type="radio" id="campus" name="category" value="campus" required>
+                        <label for="campus">
+                            <i class='bx bx-building category-icon'></i>
+                            Campus Life
+                        </label>
+                    </div>
+                    <div class="category-option">
+                        <input type="radio" id="facilities" name="category" value="facilities" required>
+                        <label for="facilities">
+                            <i class='bx bx-home category-icon'></i>
+                            Facilities
+                        </label>
+                    </div>
+                    <div class="category-option">
+                        <input type="radio" id="technology" name="category" value="technology" required>
+                        <label for="technology">
+                            <i class='bx bx-desktop category-icon'></i>
+                            Technology
+                        </label>
+                    </div>
+                    <div class="category-option">
+                        <input type="radio" id="services" name="category" value="services" required>
+                        <label for="services">
+                            <i class='bx bx-customer-service category-icon'></i>
+                            Student Services
+                        </label>
+                    </div>
+                    <div class="category-option">
+                        <input type="radio" id="other" name="category" value="other" required>
+                        <label for="other">
+                            <i class='bx bx-dots-horizontal-rounded category-icon'></i>
+                            Other
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Brief Subject/Title *</label>
+                <input type="text" id="subject" name="subject" placeholder="e.g., Library study spaces need improvement" maxlength="100" required>
+                <div class="form-help">Give your feedback a clear, descriptive title (max 100 characters)</div>
+                <div class="character-counter" id="subjectCounter">0/100</div>
+            </div>
+
+            <div class="form-group">
+                <label for="feedback">Your Detailed Feedback *</label>
+                <textarea id="feedback" name="feedback" class="textarea-large" placeholder="Please share your thoughts, experiences, suggestions, or concerns in detail. The more specific you are, the better we can address the issue. For example:&#10;&#10;• What specific problem did you encounter?&#10;• When and where did this happen?&#10;• How did it affect your experience?&#10;• What would you like to see changed or improved?" maxlength="2000" required></textarea>
+                <div class="form-help">Be as specific as possible to help us understand and address your concerns (max 2000 characters)</div>
+                <div class="character-counter" id="feedbackCounter">0/2000</div>
+            </div>
+
+            <div class="form-group">
+                <label>How urgent is this issue? *</label>
+                <div class="urgency-options">
+                    <div class="urgency-option urgency-low">
+                        <input type="radio" id="low" name="urgency" value="low" required>
+                        <label for="low">
+                            <i class='bx bx-time-five'></i><br>
+                            Low Priority<br>
+                            <small>General suggestion</small>
+                        </label>
+                    </div>
+                    <div class="urgency-option urgency-medium">
+                        <input type="radio" id="medium" name="urgency" value="medium" required>
+                        <label for="medium">
+                            <i class='bx bx-error'></i><br>
+                            Medium Priority<br>
+                            <small>Needs attention</small>
+                        </label>
+                    </div>
+                    <div class="urgency-option urgency-high">
+                        <input type="radio" id="high" name="urgency" value="high" required>
+                        <label for="high">
+                            <i class='bx bx-error-circle'></i><br>
+                            High Priority<br>
+                            <small>Urgent issue</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="suggestions">Suggested Solutions (Optional)</label>
+                <textarea id="suggestions" name="suggestions" placeholder="If you have ideas for how to fix or improve this issue, please share them here..." maxlength="1000"></textarea>
+                <div class="form-help">Help us by suggesting potential solutions or improvements</div>
+                <div class="character-counter" id="suggestionsCounter">0/1000</div>
+            </div>
+
+            <div class="form-tips">
+                <h4><i class='bx bx-lightbulb'></i> Tips for Effective Feedback</h4>
+                <ul>
+                    <li><strong>Be specific:</strong> Include details like dates, locations, and specific incidents</li>
+                    <li><strong>Stay constructive:</strong> Focus on how things can be improved</li>
+                    <li><strong>Provide context:</strong> Explain why this issue matters to you and other students</li>
+                    <li><strong>Suggest solutions:</strong> If you have ideas for improvements, share them!</li>
+                </ul>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn">
+                    <i class='bx bx-send'></i>
+                    Submit Feedback Anonymously
+                </button>
+                <button type="reset" class="btn btn-secondary">
+                    <i class='bx bx-reset'></i>
+                    Clear Form
+                </button>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <h3><i class='bx bx-check-circle'></i> Thank You!</h3>
+                <p>Your feedback has been submitted successfully and anonymously. We appreciate you taking the time to help us improve the student experience.</p>
+                <p><strong>What happens next?</strong> Your feedback will be reviewed by our team and appropriate actions will be taken. While we cannot respond to you directly (to maintain anonymity), all feedback is taken seriously and helps drive positive changes.</p>
+            </div>
+        </form>
+    </div>
+
+    <hr class="divide">
+    
+    <footer>
+        <p>For urgent matters requiring immediate attention, please contact the appropriate department directly.</p>
+        <p>&copy; 2024 Anonymous Student Feedback System. All rights reserved.</p>
+    </footer>
+
+    <script src="Script.js">
+       
+    </script>
+</body>
+</html>
